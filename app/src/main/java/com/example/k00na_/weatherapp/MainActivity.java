@@ -12,17 +12,22 @@ import android.widget.Toast;
 
 import com.example.k00na_.weatherapp.Fragments.AlertDialogFragment;
 import com.example.k00na_.weatherapp.Fragments.AlertDialogNoConectivity;
+import com.example.k00na_.weatherapp.Model.CurrentWeather;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity.class.yo";
+    private CurrentWeather mCurrentWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         double longitude = -122.423;
         String ourUrl = "https://api.forecast.io/forecast/" + apiKey + "/" + latitude + "," + longitude;
 
-        // 
+        //
         if(isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
 
@@ -54,14 +59,19 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Response response) throws IOException {
 
                     try {
+                        String jsonData = response.body().string();
+                        if (response.isSuccessful()) {
+                            Log.v(TAG, "The call was successful! " + jsonData);
+                            mCurrentWeather = getCurrentDetails(jsonData);
 
-                        if (response.isSuccessful())
-                            Log.v(TAG, "The call was successful! " + response.body().string());
-                        else
+                        } else
                             alertUserAboutError();
 
                     } catch (IOException e) {
                         Log.e(TAG, "Exception caught: " + e);
+                    }
+                    catch (JSONException e){
+                        Log.e(TAG, "JSON error" + e);
                     }
 
                 }
@@ -70,6 +80,37 @@ public class MainActivity extends AppCompatActivity {
         else
             alertUserAboutNoConnectivity();
 
+
+
+
+
+    }
+
+    private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
+
+        // making the main JSON object
+        JSONObject forecast = new JSONObject(jsonData);
+        String timezone = forecast.getString("timezone");
+        Log.d(TAG, "From JSON: " + timezone);
+
+        // creating a new JSON object from the main object
+
+        JSONObject currently = forecast.getJSONObject("currently");
+        CurrentWeather currentWeather = new CurrentWeather();
+        currentWeather.setmHumidity(currently.getDouble("humidity"));
+        currentWeather.setmTime(currently.getLong("time"));
+        currentWeather.setmIcon(currently.getString("icon"));
+        currentWeather.setmPrecipChance(currently.getDouble("precipProbability"));
+        currentWeather.setmSummary(currently.getString("summary"));
+        currentWeather.setmTemperature(currently.getDouble("temperature"));
+        currentWeather.setTimeZone(timezone);
+
+        Log.d(TAG, "" + currentWeather.getFromatedData());
+
+
+
+
+        return currentWeather;
 
     }
 
@@ -81,33 +122,10 @@ public class MainActivity extends AppCompatActivity {
         if(networkInfo!=null && networkInfo.isConnected())
             isAvailable = true;
 
-
-
         return isAvailable;
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     private void alertUserAboutError() {
