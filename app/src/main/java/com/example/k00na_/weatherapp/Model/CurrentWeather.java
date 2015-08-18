@@ -1,5 +1,7 @@
 package com.example.k00na_.weatherapp.Model;
 
+import com.example.k00na_.weatherapp.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -47,6 +49,37 @@ public class CurrentWeather {
         return timeString;
 
     }
+
+    public int getIconID(){
+
+        // clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
+
+        int iconId = R.drawable.clear_day;
+
+        if (mIcon.equals("clear-day"))
+            iconId = R.drawable.clear_day;
+        else if(mIcon.equals("clear-night"))
+            iconId = R.drawable.clear_night;
+        else if(mIcon.equals("rain"))
+            iconId = R.drawable.rain;
+        else if(mIcon.equals("snow"))
+            iconId = R.drawable.snow;
+        else if(mIcon.equals("sleet"))
+            iconId = R.drawable.sleet;
+        else if(mIcon.equals("wind"))
+            iconId = R.drawable.wind;
+        else if(mIcon.equals("fog"))
+            iconId = R.drawable.fog;
+        else if(mIcon.equals("cloudy"))
+            iconId = R.drawable.cloudy;
+        else if(mIcon.equals("partly-cloudy-day") || mIcon.equals("partly-cloudy-night"))
+            iconId = R.drawable.partly_cloudy;
+
+
+
+        return iconId;
+    }
+
 
     public void setmIcon(String mIcon) {
         this.mIcon = mIcon;
