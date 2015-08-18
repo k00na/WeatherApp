@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.k00na_.weatherapp.Fragments.AlertDialogFragment;
+import com.example.k00na_.weatherapp.Fragments.AlertDialogNoConectivity;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         double longitude = -122.423;
         String ourUrl = "https://api.forecast.io/forecast/" + apiKey + "/" + latitude + "," + longitude;
 
+        // 
         if(isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
 
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         else
-            Toast.makeText(this, "Network is unavailable!", Toast.LENGTH_LONG).show();
+            alertUserAboutNoConnectivity();
 
 
     }
@@ -112,5 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialogFragment dialog = new AlertDialogFragment();
         dialog.show(getSupportFragmentManager(), "error_dialog");
+    }
+
+    private void alertUserAboutNoConnectivity(){
+        AlertDialogNoConectivity dialog = new AlertDialogNoConectivity();
+        dialog.show(getSupportFragmentManager(), "add_stuff_to_fm");
     }
 }
