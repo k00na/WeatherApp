@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.k00na_.weatherapp.Fragments.AlertDialogFragment;
@@ -24,10 +25,23 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity.class.yo";
     private CurrentWeather mCurrentWeather;
+
+    @Bind(R.id.locationLabel)TextView locLabel;
+    @Bind(R.id.temperature_label)TextView textView;
+    @Bind(R.id.timeLabel)TextView timeLabel;
+    @Bind(R.id.humidityValue)TextView humidityLabel;
+    @Bind(R.id.rainValue)TextView rainValue;
+    @Bind(R.id.shortDescriptionText)TextView shortDescribValue;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         double latitude = 37.8267;
         double longitude = -122.423;
         String ourUrl = "https://api.forecast.io/forecast/" + apiKey + "/" + latitude + "," + longitude;
+
+        ButterKnife.bind(this);
+
+
+
 
         //
         if(isNetworkAvailable()) {
@@ -63,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             Log.v(TAG, "The call was successful! " + jsonData);
                             mCurrentWeather = getCurrentDetails(jsonData);
+                            updateDisplay();
 
                         } else
                             alertUserAboutError();
@@ -84,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    private void updateDisplay() {
+
+        locLabel.setText();
     }
 
     private CurrentWeather getCurrentDetails(String jsonData) throws JSONException {
